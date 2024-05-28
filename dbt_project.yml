@@ -21,6 +21,7 @@ require-dbt-version: [">=1.0.0", "<2.0.0"]
 
 models:
   jaffle_shop:
+      pre-hook: "{{ validate_production_references() }}"
       +materialized: view
       staging:
         database: "{{ 'STAGING_DEV' if target.name == 'dev' else 'STAGING' }}"
