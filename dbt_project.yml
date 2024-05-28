@@ -23,11 +23,11 @@ models:
   jaffle_shop:
       +materialized: view
       staging:
-        database: "{{ 'STAGING' if target.name == 'prod' else 'STAGING_DEV' }}"
+        database: "{{ 'STAGING' if target.name == 'production' else 'STAGING_DEV' }}"
       canon:
-        database: "{{ 'CANON' if target.name == 'prod' else 'CANON_DEV' }}"
+        database: "{{ 'CANON' if target.name == 'production' else 'CANON_DEV' }}"
       marts:
-        database: "{{ 'MARTS' if target.name == 'prod' else 'MARTS_DEV' }}"
+        database: "{{ 'MARTS' if target.name == 'production' else 'MARTS_DEV' }}"
         +materialized: table
       
         
