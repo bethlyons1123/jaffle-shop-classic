@@ -13,18 +13,23 @@
 
     {% for model in graph.nodes.values() %}
         {% if model.resource_type == 'model' %}
-            {{ log("Checking model: " ~ model.unique_id, info=True) }}
             {% set model_database = model.database %}
+            {{ log("Checking model: " ~ model.unique_id, info=True) }}
+            
             {% for reference in model.depends_on.nodes %}
                 {% set referenced_model = graph.nodes[reference] %}
-                {% set reference_database = referenced_model.database %}
+                {% if 'database' in referenced_model %}
+                    {% set reference_database = referenced_model.database %}
                 
-                {{ log("Model " ~ model.unique_id ~ " references " ~ referenced_model.unique_id, info=True) }}
+                    {{ log("Model " ~ model.unique_id ~ " references " ~ referenced_model.unique_id, info=True) }}
                 
-                {% if reference_database in database_constraints[model_database] %}
-                    {% set error_message = "Model {{ model.unique_id }} references {{ reference_database }} which is not allowed for database {{ model_database }}" %}
-                    {{ log(error_message, info=True) }}
-                    {% do errors.append(error_message) %}
+                    {% if reference_database in database_constraints.get(model_database, []) %}
+                        {% set error_message = "Model " ~ model.unique_id ~ " references " ~ reference_database ~ " which is not allowed for database " ~ model_database %}
+                        {{ log(error_message, info=True) }}
+                        {% do errors.append(error_message) %}
+                    {% endif %}
+                {% else %}
+                    {{ log("Referenced model " ~ referenced_model.unique_id ~ " does not have a database attribute", info=True) }}
                 {% endif %}
             {% endfor %}
         {% endif %}
@@ -36,4 +41,3 @@
         {{ log("No validation errors found.", info=True) }}
     {% endif %}
 {% endmacro %}
-
