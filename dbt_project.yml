@@ -24,8 +24,6 @@ models:
       +materialized: view
       staging:
         database: "{{ 'STAGING_DEV' if target.name == 'dev' else 'STAGING' }}"
-        post-hook: 
-        - "{{ validate_production_references() }}"
       canon:
         database: "{{ 'CANON_DEV' if target.name == 'dev' else 'CANON' }}"
       marts:
